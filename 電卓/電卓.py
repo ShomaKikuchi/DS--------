@@ -1,5 +1,7 @@
 import flet as ft
 import math
+
+# 基本ボタン
 class CalcButton(ft.ElevatedButton):
     def __init__(self, text, button_clicked, expand=1):
         super().__init__()
@@ -7,26 +9,36 @@ class CalcButton(ft.ElevatedButton):
         self.expand = expand
         self.on_click = button_clicked
         self.data = text
+
+# 数字ボタン
 class DigitButton(CalcButton):
     def __init__(self, text, button_clicked, expand=1):
         CalcButton.__init__(self, text, button_clicked, expand)
         self.bgcolor = ft.colors.WHITE24
         self.color = ft.colors.WHITE
+
+# 演算ボタン
 class ActionButton(CalcButton):
     def __init__(self, text, button_clicked):
         CalcButton.__init__(self, text, button_clicked)
         self.bgcolor = ft.colors.ORANGE
         self.color = ft.colors.WHITE
+
+# その他の操作ボタン
 class ExtraActionButton(CalcButton):
     def __init__(self, text, button_clicked):
         CalcButton.__init__(self, text, button_clicked)
         self.bgcolor = ft.colors.BLUE_GREY_100
         self.color = ft.colors.BLACK
+
+# 科学計算ボタン
 class ScientificActionButton(CalcButton):
     def __init__(self, text, button_clicked):
         CalcButton.__init__(self, text, button_clicked)
         self.bgcolor = ft.colors.GREEN
         self.color = ft.colors.WHITE
+
+# 電卓アプリ
 class CalculatorApp(ft.Container):
     def __init__(self):
         super().__init__()
@@ -42,164 +54,140 @@ class CalculatorApp(ft.Container):
                 ft.Row(controls=[self.result], alignment="end"),
                 ft.Row(
                     controls=[
-                        ExtraActionButton(
-                            text="AC", button_clicked=self.button_clicked
-                        ),
-                        ExtraActionButton(
-                            text="+/-", button_clicked=self.button_clicked
-                        ),
-                        ExtraActionButton(text="%", button_clicked=self.button_clicked),
-                        ActionButton(text="/", button_clicked=self.button_clicked),
+                        ExtraActionButton("AC", self.button_clicked),
+                        ExtraActionButton("+/-", self.button_clicked),
+                        ExtraActionButton("%", self.button_clicked),
+                        ActionButton("/", self.button_clicked),
                     ]
                 ),
-                # 科学計算モードのボタン追加
+                # 科学計算ボタンの追加
                 ft.Row(
                     controls=[
-                        ScientificActionButton(
-                            text="sin", button_clicked=self.button_clicked
-                        ),
-                        ScientificActionButton(
-                            text="cos", button_clicked=self.button_clicked
-                        ),
-                        ScientificActionButton(
-                            text="tan", button_clicked=self.button_clicked
-                        ),
-                        ScientificActionButton(
-                            text="sqrt", button_clicked=self.button_clicked
-                        ),
+                        ScientificActionButton("sin", self.button_clicked),
+                        ScientificActionButton("cos", self.button_clicked),
+                        ScientificActionButton("tan", self.button_clicked),
+                        ScientificActionButton("sqrt", self.button_clicked),
+                        ScientificActionButton("log", self.button_clicked),  # 新規ボタン
                     ]
                 ),
                 ft.Row(
                     controls=[
-                        DigitButton(text="7", button_clicked=self.button_clicked),
-                        DigitButton(text="8", button_clicked=self.button_clicked),
-                        DigitButton(text="9", button_clicked=self.button_clicked),
-                        ActionButton(text="*", button_clicked=self.button_clicked),
+                        DigitButton("7", self.button_clicked),
+                        DigitButton("8", self.button_clicked),
+                        DigitButton("9", self.button_clicked),
+                        ActionButton("*", self.button_clicked),
                     ]
                 ),
                 ft.Row(
                     controls=[
-                        DigitButton(text="4", button_clicked=self.button_clicked),
-                        DigitButton(text="5", button_clicked=self.button_clicked),
-                        DigitButton(text="6", button_clicked=self.button_clicked),
-                        ActionButton(text="-", button_clicked=self.button_clicked),
+                        DigitButton("4", self.button_clicked),
+                        DigitButton("5", self.button_clicked),
+                        DigitButton("6", self.button_clicked),
+                        ActionButton("-", self.button_clicked),
                     ]
                 ),
                 ft.Row(
                     controls=[
-                        DigitButton(text="1", button_clicked=self.button_clicked),
-                        DigitButton(text="2", button_clicked=self.button_clicked),
-                        DigitButton(text="3", button_clicked=self.button_clicked),
-                        ActionButton(text="+", button_clicked=self.button_clicked),
+                        DigitButton("1", self.button_clicked),
+                        DigitButton("2", self.button_clicked),
+                        DigitButton("3", self.button_clicked),
+                        ActionButton("+", self.button_clicked),
                     ]
                 ),
                 ft.Row(
                     controls=[
-                        DigitButton(
-                            text="0", expand=2, button_clicked=self.button_clicked
-                        ),
-                        DigitButton(text=".", button_clicked=self.button_clicked),
-                        ActionButton(text="=", button_clicked=self.button_clicked),
+                        DigitButton("0", self.button_clicked, expand=2),
+                        DigitButton(".", self.button_clicked),
+                        ActionButton("=", self.button_clicked),
                     ]
                 ),
                 # モード切替ボタン
                 ft.Row(
                     controls=[
-                        ExtraActionButton(
-                            text="Sci", button_clicked=self.toggle_scientific_mode
-                        ),
+                        ExtraActionButton("Sci", self.toggle_scientific_mode),
                     ]
                 ),
             ]
         )
+
     def toggle_scientific_mode(self, e):
         # 科学計算モードのトグル
         self.is_scientific_mode = not self.is_scientific_mode
-        if self.is_scientific_mode:
-            self.result.value = "Sci Mode"
-        else:
-            self.result.value = "Standard Mode"
+        self.result.value = "Sci Mode" if self.is_scientific_mode else "Standard Mode"
         self.update()
+
     def button_clicked(self, e):
         data = e.control.data
         print(f"Button clicked with data = {data}")
-        if self.result.value == "Error" or data == "AC":
-            self.result.value = "0"
-            self.reset()
-        elif data in ("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."):
-            if self.result.value == "0" or self.new_operand == True:
-                self.result.value = data
-                self.new_operand = False
-            else:
-                self.result.value = self.result.value + data
-        elif data in ("+", "-", "*", "/"):
-            self.result.value = self.calculate(
-                self.operand1, float(self.result.value), self.operator
-            )
-            self.operator = data
-            if self.result.value == "Error":
-                self.operand1 = "0"
-            else:
-                self.operand1 = float(self.result.value)
-            self.new_operand = True
-        elif data in ("="):
-            self.result.value = self.calculate(
-                self.operand1, float(self.result.value), self.operator
-            )
-            self.reset()
-        elif data in ("%"):
-            self.result.value = float(self.result.value) / 100
-            self.reset()
-        elif data in ("+/-"):
-            if float(self.result.value) > 0:
-                self.result.value = "-" + str(self.result.value)
-            elif float(self.result.value) < 0:
-                self.result.value = str(
-                    self.format_number(abs(float(self.result.value)))
+        try:
+            if self.result.value == "Error" or data == "AC":
+                self.result.value = "0"
+                self.reset()
+            elif data in ("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."):
+                if self.result.value == "0" or self.new_operand:
+                    self.result.value = data
+                    self.new_operand = False
+                else:
+                    self.result.value += data
+            elif data in ("+", "-", "*", "/"):
+                self.result.value = self.calculate(
+                    self.operand1, float(self.result.value), self.operator
                 )
-        # 科学計算モードの処理
-        elif self.is_scientific_mode:
-            try:
-                num = float(self.result.value)
-                if data == "sin":
-                    self.result.value = math.sin(math.radians(num))
-                elif data == "cos":
-                    self.result.value = math.cos(math.radians(num))
-                elif data == "tan":
-                    self.result.value = math.tan(math.radians(num))
-                elif data == "sqrt":
-                    if num < 0:
-                        self.result.value = "Error"
-                    else:
-                        self.result.value = math.sqrt(num)
-            except ValueError:
-                self.result.value = "Error"
+                self.operator = data
+                self.operand1 = float(self.result.value)
+                self.new_operand = True
+            elif data == "=":
+                self.result.value = self.calculate(
+                    self.operand1, float(self.result.value), self.operator
+                )
+                self.reset()
+            elif data == "%":
+                self.result.value = float(self.result.value) / 100
+                self.reset()
+            elif data == "+/-":
+                self.result.value = str(-float(self.result.value))
+            elif self.is_scientific_mode:
+                self.result.value = self.perform_scientific_calculation(data, float(self.result.value))
+        except ValueError:
+            self.result.value = "Error"
         self.update()
-    def format_number(self, num):
-        if num % 1 == 0:
-            return int(num)
-        else:
-            return num
+
+    def perform_scientific_calculation(self, data, num):
+        # 科学計算の処理を分離
+        try:
+            if data == "sin":
+                return math.sin(math.radians(num))
+            elif data == "cos":
+                return math.cos(math.radians(num))
+            elif data == "tan":
+                return math.tan(math.radians(num))
+            elif data == "sqrt":
+                return math.sqrt(num) if num >= 0 else "Error"
+            elif data == "log":
+                return math.log10(num) if num > 0 else "Error"
+        except ValueError:
+            return "Error"
+
     def calculate(self, operand1, operand2, operator):
+        # 基本計算の処理
         if operator == "+":
-            return self.format_number(operand1 + operand2)
+            return operand1 + operand2
         elif operator == "-":
-            return self.format_number(operand1 - operand2)
+            return operand1 - operand2
         elif operator == "*":
-            return self.format_number(operand1 * operand2)
+            return operand1 * operand2
         elif operator == "/":
-            if operand2 == 0:
-                return "Error"
-            else:
-                return self.format_number(operand1 / operand2)
+            return "Error" if operand2 == 0 else operand1 / operand2
+
     def reset(self):
         self.operator = "+"
         self.operand1 = 0
         self.new_operand = True
+
+# メイン関数
 def main(page: ft.Page):
-    page.title = "Calc App"
-    # create application instance
+    page.title = "Scientific Calculator"
     calc = CalculatorApp()
-    # add application's root control to the page
     page.add(calc)
+
 ft.app(target=main)
